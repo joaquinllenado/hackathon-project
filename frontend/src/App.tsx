@@ -5,7 +5,9 @@ function App() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    fetch("/api/hello")
+    const backendBaseUrl = import.meta.env.VITE_BACKEND_URL || "";
+
+    fetch(`${backendBaseUrl}/api/hello`)
       .then((res) => res.json())
       .then((data) => setMessage(data.message))
       .catch(() => setMessage("Failed to connect to backend"));
