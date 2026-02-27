@@ -130,42 +130,38 @@ def get_strategy():
         raise HTTPException(status_code=503, detail=f"Neo4j unavailable: {e}") from e
 
 
+_CLASSIFICATION_PRIORITY = {"Strike": 0, "Monitor": 1, "Disregard": 2}
+
+
 @app.get("/api/leads")
 def get_leads(strategy_version: int | None = None):
     """Return leads ordered by classification: Strike → Monitor → Disregard → unclassified."""
-    _ORDER = """
-        ORDER BY
-          CASE c.classification
-            WHEN 'Strike'    THEN 0
-            WHEN 'Monitor'   THEN 1
-            WHEN 'Disregard' THEN 2
-            ELSE 3
-          END, c.name
-    """
     try:
         with get_session() as session:
             if strategy_version is not None:
                 result = session.run(
-                    f"""
-                    MATCH (s:Strategy {{version: $version}})-[:TARGETS]->(c:Company)
-                    RETURN c {{.*}} AS company
-                    {_ORDER}
+                    """
+                    MATCH (s:Strategy {version: $version})-[:TARGETS]->(c:Company)
+                    RETURN c {.*} AS company
                     """,
                     version=strategy_version,
                 )
             else:
                 result = session.run(
-                    f"""
+                    """
                     MATCH (s:Strategy)-[:TARGETS]->(c:Company)
                     WITH max(s.version) AS latest
-                    MATCH (s:Strategy {{version: latest}})-[:TARGETS]->(c:Company)
-                    RETURN c {{.*}} AS company
-                    {_ORDER}
+                    MATCH (s:Strategy {version: latest})-[:TARGETS]->(c:Company)
+                    RETURN c {.*} AS company
                     """
                 )
             leads = [dict(r["company"]) for r in result]
             for lead in leads:
                 lead.update({k: _serialize_value(v) for k, v in lead.items()})
+            leads.sort(key=lambda l: (
+                _CLASSIFICATION_PRIORITY.get(l.get("classification", ""), 3),
+                l.get("name", ""),
+            ))
             return {"leads": leads}
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Neo4j unavailable: {e}") from e
