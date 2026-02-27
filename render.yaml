@@ -17,7 +17,7 @@ services:
     routes:
       - type: rewrite
         source: /api/*
-        destination: https://backend-XXXXX.onrender.com/api/*
+        destination: https://hackathon-project-9jeo.onrender.com/api/*
       - type: rewrite
         source: /*
         destination: /index.html
