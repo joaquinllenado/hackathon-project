@@ -1,0 +1,6 @@
+.app {
+  max-width: 600px;
+  margin: 100px auto;
+  text-align: center;
+  font-family: system-ui, sans-serif;
+}
