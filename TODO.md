@@ -66,18 +66,18 @@
 - [x] Implement Yutori Scout background worker (`backend/workers/scout.py`)
   - Polls `SCOUT_TARGET_URL` every `SCOUT_POLL_INTERVAL` seconds
   - On status change → push event to agent loop + WebSocket feed
-- [ ] Build `POST /api/mock-trigger` endpoint (manual trigger for demo)
-- [ ] Build `GET /api/strategy` endpoint — returns current strategy from Neo4j
-- [ ] Build `GET /api/leads` endpoint — returns scored leads
-- [ ] Build `GET /api/lessons` endpoint — returns lesson log
-- [ ] Build `GET /api/graph` endpoint — returns Neo4j subgraph as JSON for frontend viz
-- [ ] Build React dashboard:
-  - [ ] Product description input (text box + mic button for Modulate)
-  - [ ] Real-time agent activity feed (WebSocket)
-  - [ ] Lead table with validation scores
-  - [ ] Strategy panel showing current ICP, keywords, competitors
-  - [ ] Neo4j graph visualization (use a lib like `react-force-graph` or `vis-network`)
-  - [ ] Strategy evolution timeline
+- [x] Build `POST /api/mock-trigger` endpoint (manual trigger for demo)
+- [x] Build `GET /api/strategy` endpoint — returns current strategy from Neo4j
+- [x] Build `GET /api/leads` endpoint — returns scored leads
+- [x] Build `GET /api/lessons` endpoint — returns lesson log
+- [x] Build `GET /api/graph` endpoint — returns Neo4j subgraph as JSON for frontend viz
+- [x] Build React dashboard:
+  - [x] Product description input (text box + mic button for Modulate)
+  - [x] Real-time agent activity feed (WebSocket)
+  - [x] Lead table with validation scores
+  - [x] Strategy panel showing current ICP, keywords, competitors
+  - [x] Neo4j graph visualization (use a lib like `react-force-graph` or `vis-network`)
+  - [x] Strategy evolution timeline
 
 ---
 
