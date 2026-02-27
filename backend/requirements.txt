@@ -1,2 +1,3 @@
+neo4j
 fastapi==0.115.0
 uvicorn==0.30.6

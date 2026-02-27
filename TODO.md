@@ -3,11 +3,11 @@
 ## Phase 1: Foundation (11:00–11:45)
 
 ### Partner A (Backend & Logic)
-- [ ] Create 30–50 mock sales scenario JSON examples for Fastino Pioneer fine-tuning
+- [X] Create 30–50 mock sales scenario JSON examples for Fastino Pioneer fine-tuning
   - Input: product description → Output: ICP JSON (`{ "icp", "keywords", "competitors" }`)
   - Input: lead + evidence → Output: validation score + reasoning
-- [ ] Upload dataset and kick off Fastino Pioneer training run
-- [ ] Set up Neo4j Aura free instance — get connection URI, user, password
+- [X] Upload dataset and kick off Fastino Pioneer training run
+- [X] Set up Neo4j Aura free instance — get connection URI, user, password
 
 ### Partner B (Infra & UX)
 - [x] Deploy the FastAPI scaffold to Render (web service live with `/api/hello`)
