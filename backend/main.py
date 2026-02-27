@@ -1,3 +1,7 @@
+import asyncio
+import os
+from contextlib import asynccontextmanager
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,8 +15,24 @@ from services.feed_manager import feed_manager
 from agent.strategy import run_strategy_generation
 from agent.validation import run_validation_loop
 from agent.pivot import run_pivot_drafting
+from workers.scout import run_scout_loop
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    scout_task = None
+    if os.environ.get("SCOUT_TARGET_URL", "").strip():
+        scout_task = asyncio.create_task(run_scout_loop())
+    yield
+    if scout_task is not None:
+        scout_task.cancel()
+        try:
+            await scout_task
+        except asyncio.CancelledError:
+            pass
+
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

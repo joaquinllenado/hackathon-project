@@ -35,8 +35,8 @@
 ### Partner B
 - [x] Integrate Modulate API for voice-to-text (`backend/services/modulate_service.py`)
 - [ ] Connect Tavily client in backend (`pip install tavily-python`, add to requirements)
-- [ ] Build `POST /api/product` endpoint — accepts product description text, stores it, kicks off agent
-- [ ] Set up WebSocket `/api/ws/feed` for real-time agent activity streaming to frontend
+- [x] Build `POST /api/product` endpoint — accepts product description text, stores it, kicks off agent
+- [x] Set up WebSocket `/api/ws/feed` for real-time agent activity streaming to frontend
 
 ---
 
@@ -63,7 +63,7 @@
 - [X] Implement pivot email drafting (SLM prompt for outage-context outreach)
 
 ### Partner B
-- [ ] Implement Yutori Scout background worker (`backend/workers/scout.py`)
+- [x] Implement Yutori Scout background worker (`backend/workers/scout.py`)
   - Polls `SCOUT_TARGET_URL` every `SCOUT_POLL_INTERVAL` seconds
   - On status change → push event to agent loop + WebSocket feed
 - [ ] Build `POST /api/mock-trigger` endpoint (manual trigger for demo)
