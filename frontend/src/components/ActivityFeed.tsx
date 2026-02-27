@@ -1,77 +1,90 @@
-import { useActivityFeed } from "../hooks/useActivityFeed";
+import type { ActivityEvent } from "../types/api";
 
-function eventLabel(type: string): string {
-  const labels: Record<string, string> = {
-    product_received: "Product received",
-    market_research_started: "Market research started",
-    market_research_done: "Market research done",
-    strategy_generated: "Strategy generated",
-    strategy_stored: "Strategy stored",
-    agent_error: "Error",
-    scout_status_change: "Scout: status changed",
-    pivot_email_drafted: "Pivot email drafted",
-    mock_trigger_response: "Mock trigger response",
-  };
-  return labels[type] ?? type;
+const EVENT_CONFIG: Record<string, { label: string; icon: string }> = {
+  product_received: { label: "Product received", icon: "cube" },
+  market_research_started: { label: "Researching market", icon: "search" },
+  market_research_done: { label: "Research complete", icon: "check" },
+  strategy_generated: { label: "Strategy generated", icon: "lightning" },
+  strategy_stored: { label: "Strategy stored", icon: "save" },
+  agent_error: { label: "Error", icon: "error" },
+  scout_status_change: { label: "Scout alert", icon: "alert" },
+  pivot_email_drafted: { label: "Pivot drafted", icon: "mail" },
+  mock_trigger_response: { label: "Trigger fired", icon: "zap" },
+};
+
+function StatusDot({ icon }: { icon: string }) {
+  const isError = icon === "error";
+  const isAlert = icon === "alert" || icon === "zap";
+  const color = isError
+    ? "bg-danger"
+    : isAlert
+      ? "bg-warning"
+      : "bg-accent";
+  return <span className={`w-1.5 h-1.5 rounded-full ${color} shrink-0`} />;
 }
 
-function EventItem({ event }: { event: { type: string; data: Record<string, unknown>; timestamp: string } }) {
-  const isError = event.type === "agent_error";
-  const time = new Date(event.timestamp).toLocaleTimeString();
-
-  return (
-    <div
-      className={`p-2 rounded text-sm ${
-        isError
-          ? "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200"
-          : "bg-gray-50 dark:bg-gray-800/50 text-gray-800 dark:text-gray-200"
-      }`}
-    >
-      <div className="flex justify-between gap-2">
-        <span className="font-medium">{eventLabel(event.type)}</span>
-        <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">
-          {time}
-        </span>
-      </div>
-      {Object.keys(event.data).length > 0 && (
-        <pre className="mt-1 text-xs overflow-x-auto text-gray-600 dark:text-gray-300">
-          {JSON.stringify(event.data)}
-        </pre>
-      )}
-    </div>
+function formatData(data: Record<string, unknown>): string | null {
+  const meaningful = Object.entries(data).filter(
+    ([, v]) => v !== undefined && v !== null && v !== ""
   );
+  if (meaningful.length === 0) return null;
+  return meaningful
+    .map(([k, v]) => {
+      const val = typeof v === "object" ? JSON.stringify(v) : String(v);
+      return `${k}: ${val}`;
+    })
+    .join(" / ");
 }
 
-export function ActivityFeed() {
-  const { events, connected } = useActivityFeed();
+export function ActivityFeed({ events }: { events?: ActivityEvent[] }) {
+  const displayEvents = events ?? [];
 
   return (
-    <div className="flex flex-col h-full min-h-[200px]">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="font-semibold text-gray-900 dark:text-white">
-          Activity Feed
-        </h3>
-        <span
-          className={`text-xs px-2 py-0.5 rounded ${
-            connected
-              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
-              : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
-          }`}
-        >
-          {connected ? "Live" : "Reconnecting..."}
-        </span>
-      </div>
-      <div className="flex-1 overflow-y-auto space-y-2 pr-1">
-        {events.length === 0 ? (
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            No activity yet. Submit a product description to start.
-          </p>
-        ) : (
-          events.map((e, i) => (
-            <EventItem key={`${e.timestamp}-${i}`} event={e} />
-          ))
-        )}
-      </div>
+    <div className="flex-1 overflow-y-auto -mx-5 px-5 space-y-1">
+      {displayEvents.length === 0 ? (
+        <p className="text-sm text-text-tertiary py-4 text-center">
+          Waiting for activity...
+        </p>
+      ) : (
+        displayEvents.map((e, i) => {
+          const config = EVENT_CONFIG[e.type] ?? { label: e.type, icon: "dot" };
+          const time = new Date(e.timestamp).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          });
+          const detail = formatData(e.data);
+          const isError = e.type === "agent_error";
+
+          return (
+            <div
+              key={`${e.timestamp}-${i}`}
+              className={`flex items-start gap-3 py-2.5 px-3 rounded-lg text-sm transition-colors ${
+                isError ? "bg-danger/5" : "hover:bg-surface-overlay"
+              }`}
+            >
+              <div className="pt-1.5">
+                <StatusDot icon={config.icon} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className={`font-medium text-xs ${isError ? "text-danger" : "text-text-primary"}`}>
+                    {config.label}
+                  </span>
+                  <span className="text-[10px] text-text-tertiary tabular-nums shrink-0">
+                    {time}
+                  </span>
+                </div>
+                {detail && (
+                  <p className="text-xs text-text-secondary mt-0.5 truncate">
+                    {detail}
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        })
+      )}
     </div>
   );
 }

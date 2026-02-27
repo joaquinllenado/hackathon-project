@@ -21,17 +21,19 @@ export function MockTriggerButton() {
   };
 
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className="relative">
       <button
         type="button"
         onClick={handleClick}
         disabled={loading}
-        className="px-3 py-1.5 text-sm bg-amber-500 hover:bg-amber-600 disabled:bg-gray-400 dark:disabled:bg-gray-600 text-white rounded-lg font-medium transition-colors"
+        className="px-3.5 py-2 text-xs font-medium rounded-lg bg-warning/10 text-warning hover:bg-warning/20 disabled:opacity-40 transition-all border border-warning/20"
       >
-        {loading ? "Triggering..." : "Trigger mock outage"}
+        {loading ? "Triggering..." : "Simulate Outage"}
       </button>
       {error && (
-        <span className="text-xs text-red-600 dark:text-red-400">{error}</span>
+        <span className="absolute top-full right-0 mt-1 text-[10px] text-danger whitespace-nowrap">
+          {error}
+        </span>
       )}
     </div>
   );

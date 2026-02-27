@@ -80,6 +80,10 @@ export async function postMockTrigger(payload: {
   });
 }
 
+export async function postReset() {
+  return fetchJson<{ deleted_nodes: number }>("/api/reset", { method: "POST" });
+}
+
 export function getWsFeedUrl(): string {
   const base = baseUrl || window.location.origin;
   const wsProtocol = base.startsWith("https") ? "wss" : "ws";

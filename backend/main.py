@@ -304,6 +304,23 @@ def get_graph():
         raise HTTPException(status_code=503, detail=f"Neo4j unavailable: {e}") from e
 
 
+@app.post("/api/reset")
+async def reset_graph():
+    """Wipe all nodes and relationships from Neo4j so the agent starts fresh."""
+    try:
+        with get_session() as session:
+            result = session.run("MATCH (n) DETACH DELETE n")
+            summary = result.consume()
+            deleted = summary.counters.nodes_deleted
+        await feed_manager.broadcast(
+            "graph_reset",
+            {"nodes_deleted": deleted, "status": "All data cleared"},
+        )
+        return {"deleted_nodes": deleted}
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Neo4j unavailable: {e}") from e
+
+
 @app.websocket("/api/ws/feed")
 async def ws_feed(websocket: WebSocket):
     await feed_manager.connect(websocket)

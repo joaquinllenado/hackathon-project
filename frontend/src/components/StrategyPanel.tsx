@@ -25,92 +25,96 @@ export function StrategyPanel({ refreshTrigger }: { refreshTrigger?: number }) {
   }, [load, refreshTrigger]);
 
   if (loading && !strategy) {
-    return (
-      <div className="p-4 text-gray-500 dark:text-gray-400 text-sm">
-        Loading strategy...
-      </div>
-    );
+    return <EmptyState text="Loading strategy..." />;
   }
 
   if (error) {
     return (
-      <div className="p-4 text-red-600 dark:text-red-400 text-sm flex justify-between items-center">
-        <span>{error}</span>
-        <button
-          onClick={load}
-          className="px-2 py-1 text-xs bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600"
-        >
-          Retry
-        </button>
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-danger">{error}</span>
+        <RetryButton onClick={load} />
       </div>
     );
   }
 
   if (!strategy) {
-    return (
-      <div className="p-4 text-gray-500 dark:text-gray-400 text-sm">
-        No strategy yet. Submit a product description to generate one.
-      </div>
-    );
+    return <EmptyState text="No strategy yet. Describe your product above to generate one." />;
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-gray-900 dark:text-white">
-          Strategy v{strategy.version}
-        </h3>
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-medium text-accent bg-accent-muted px-2 py-0.5 rounded-md">
+          v{strategy.version}
+        </span>
         {strategy.created_at && (
-          <span className="text-xs text-gray-500 dark:text-gray-400">
+          <span className="text-xs text-text-tertiary">
             {new Date(strategy.created_at).toLocaleDateString()}
           </span>
         )}
       </div>
 
       <div>
-        <h4 className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1">
-          ICP
-        </h4>
-        <p className="text-sm text-gray-800 dark:text-gray-200">
-          {strategy.icp}
-        </p>
+        <Label>Ideal Customer Profile</Label>
+        <p className="text-sm text-text-primary leading-relaxed">{strategy.icp}</p>
       </div>
 
-      {strategy.keywords && strategy.keywords.length > 0 && (
+      {strategy.keywords?.length > 0 && (
         <div>
-          <h4 className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
-            Keywords
-          </h4>
-          <div className="flex flex-wrap gap-1">
+          <Label>Keywords</Label>
+          <div className="flex flex-wrap gap-1.5">
             {strategy.keywords.map((k) => (
-              <span
-                key={k}
-                className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 rounded text-xs"
-              >
-                {k}
-              </span>
+              <Tag key={k} variant="accent">{k}</Tag>
             ))}
           </div>
         </div>
       )}
 
-      {strategy.competitors && strategy.competitors.length > 0 && (
+      {strategy.competitors?.length > 0 && (
         <div>
-          <h4 className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
-            Competitors
-          </h4>
-          <div className="flex flex-wrap gap-1">
+          <Label>Competitors</Label>
+          <div className="flex flex-wrap gap-1.5">
             {strategy.competitors.map((c) => (
-              <span
-                key={c}
-                className="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded text-xs"
-              >
-                {c}
-              </span>
+              <Tag key={c} variant="neutral">{c}</Tag>
             ))}
           </div>
         </div>
       )}
     </div>
+  );
+}
+
+function Label({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-[10px] font-medium uppercase tracking-widest text-text-tertiary mb-1.5">
+      {children}
+    </p>
+  );
+}
+
+function Tag({ children, variant }: { children: React.ReactNode; variant: "accent" | "neutral" }) {
+  const cls =
+    variant === "accent"
+      ? "bg-accent-muted text-accent"
+      : "bg-surface-overlay text-text-secondary border border-border-subtle";
+  return (
+    <span className={`inline-block px-2 py-0.5 rounded-md text-xs ${cls}`}>
+      {children}
+    </span>
+  );
+}
+
+function EmptyState({ text }: { text: string }) {
+  return <p className="text-sm text-text-tertiary py-2">{text}</p>;
+}
+
+function RetryButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="text-[10px] text-text-secondary hover:text-text-primary transition-colors"
+    >
+      Retry
+    </button>
   );
 }
