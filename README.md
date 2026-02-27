@@ -45,39 +45,46 @@ A self-improving autonomous SDR (Sales Development Rep) agent that generates sal
 
 ## Tech Stack
 
-| Layer        | Technology                | Purpose                                    |
-|-------------|---------------------------|--------------------------------------------|
-| Frontend    | React + TypeScript (Vite) | Dashboard, graph viz, voice input           |
-| Backend     | FastAPI (Python)          | API, agent loop, background workers         |
-| Database    | PostgreSQL (Render)       | Lead storage, logs                          |
-| Graph DB    | Neo4j Aura (free tier)    | Strategy nodes, lessons, relationships      |
-| SLM         | Fastino Pioneer           | ICP generation, lead scoring, pivots        |
-| Web Search  | Tavily API                | Competitive research, lead fact-checking    |
-| Voice       | Modulate API              | Voice-to-text product description intake    |
-| Scout       | Yutori                    | Background monitoring of external signals   |
-| Hosting     | Render                    | Web service + static site + Postgres        |
+| Layer        | Technology                          | Purpose                                    |
+|-------------|-------------------------------------|--------------------------------------------|
+| Frontend    | React + TypeScript (Vite)           | Dashboard, graph viz, voice input           |
+| Backend     | FastAPI (Python)                    | API, agent loop, background workers         |
+| Database    | PostgreSQL (Render)                 | Lead storage, logs                          |
+| Graph DB    | Neo4j (Sandbox or Aura free tier)   | Strategy nodes, lessons, relationships      |
+| SLM         | Fastino Pioneer (`Qwen/Qwen3-8B`)  | ICP generation, lead scoring, pivots        |
+| Web Search  | Tavily API                          | Competitive research, lead fact-checking    |
+| Voice       | Modulate API (Velma-2 STT)          | Voice-to-text product description intake    |
+| Scout       | Yutori                              | Background monitoring of external signals   |
+| Hosting     | Render                              | Web service + static site + Postgres        |
 
 ## Neo4j Schema
 
 ```cypher
 // Strategy nodes (versioned)
-(:Strategy {version: INT, icp: STRING, keywords: [STRING], created_at: TIMESTAMP})
+(:Strategy {version: INT, icp: STRING, keywords: [STRING], competitors: [STRING], created_at: DATETIME})
 
 // Leads
-(:Company {name: STRING, domain: STRING, tech_stack: [STRING], employees: INT, funding: STRING})
+(:Company {name: STRING, domain: STRING, tech_stack: [STRING], employees: INT, funding: STRING, score: INT})
 
 // Evidence from web research
-(:Evidence {source_url: STRING, summary: STRING, retrieved_at: TIMESTAMP})
+(:Evidence {source_url: STRING, summary: STRING, retrieved_at: DATETIME})
 
 // Lessons learned from corrections
-(:Lesson {type: STRING, details: STRING, timestamp: TIMESTAMP})
+(:Lesson {lesson_id: STRING, type: STRING, details: STRING, timestamp: DATETIME})
   // types: "TechStackMismatch", "CompanyTooSmall", "ContractLockIn", "SegmentPivot", etc.
 
 // Relationships
 (:Strategy)-[:TARGETS]->(:Company)
 (:Company)-[:HAS_EVIDENCE]->(:Evidence)
 (:Company)-[:LEARNED_FROM]->(:Lesson)
+(:Strategy)-[:LEARNED_FROM]->(:Lesson)      // strategy-level pivots
 (:Strategy)-[:EVOLVED_FROM]->(:Strategy)
+
+// Constraints
+CREATE CONSTRAINT strategy_version IF NOT EXISTS FOR (s:Strategy) REQUIRE s.version IS UNIQUE;
+CREATE CONSTRAINT company_domain IF NOT EXISTS FOR (c:Company) REQUIRE c.domain IS UNIQUE;
+CREATE CONSTRAINT lesson_id IF NOT EXISTS FOR (l:Lesson) REQUIRE l.lesson_id IS UNIQUE;
+CREATE INDEX evidence_url IF NOT EXISTS FOR (e:Evidence) ON (e.source_url);
 ```
 
 ## Key Agent Flows
@@ -125,17 +132,45 @@ During demo, teammate edits the gist/endpoint to trigger the scout live.
 5. **[2:15–2:45]** Show the Neo4j graph: Strategy evolution, Lesson nodes, Evidence chains.
 6. **[2:45–3:00]** Wrap: "No human touched the strategy. The agent learned, pivoted, and improved autonomously."
 
+## Project Structure
+
+```
+backend/
+├── main.py                          # FastAPI app, routes, middleware
+├── setup_neo4j.py                   # Schema setup + synthetic seed data (CLI)
+├── requirements.txt
+├── .env                             # Local env vars (not committed)
+└── services/
+    ├── neo4j_service.py             # Neo4j driver, session helper, cleanup
+    ├── tavily_service.py            # fact_check_lead(), research_market()
+    ├── slm_service.py               # generate_strategy(), score_lead(), refine_strategy(), draft_pivot_email()
+    └── modulate_service.py          # transcribe_audio() via Modulate Velma-2 STT
+
+frontend/
+├── src/
+├── package.json
+└── vite.config.ts
+```
+
 ## Local Development
 
 ### Backend
 ```bash
 cd backend
-python -m venv venv
-source venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 Runs on http://localhost:8000
+
+### Neo4j Setup
+```bash
+cd backend
+python setup_neo4j.py              # create constraints + seed data (skip if data exists)
+python setup_neo4j.py --reset      # wipe everything, recreate constraints, reseed
+python setup_neo4j.py --seed-only  # just insert seed data (no constraint creation)
+```
 
 ### Frontend
 ```bash
@@ -148,12 +183,14 @@ Runs on http://localhost:5173 — API calls are proxied to the backend.
 ## Environment Variables
 
 ```
-NEO4J_URI=neo4j+s://<your-aura-instance>.neo4j.io
+NEO4J_URI=bolt://<your-sandbox-ip>            # or neo4j+s://<aura-instance>.neo4j.io
 NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=<password>
+NEO4J_DATABASE=neo4j
 TAVILY_API_KEY=<key>
-FASTINO_API_KEY=<key>
+FASTINO_PIONEER_API_KEY=<key>
 MODULATE_API_KEY=<key>
+YUTORI_API_KEY=<key>
 DATABASE_URL=postgresql://<render-postgres-url>
 SCOUT_TARGET_URL=<url-to-mock-status-page>
 SCOUT_POLL_INTERVAL=10
