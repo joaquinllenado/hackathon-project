@@ -7,13 +7,15 @@ export interface Strategy {
   created_at: string;
 }
 
+export type Classification = "Strike" | "Monitor" | "Disregard";
+
 export interface Lead {
   name: string;
   domain: string;
   tech_stack: string[];
   employees?: number;
   funding?: string;
-  score?: number;
+  classification?: Classification | null;
 }
 
 export interface Lesson {
@@ -35,7 +37,7 @@ export interface GraphNode {
   name?: string;
   domain?: string;
   tech_stack?: string[];
-  score?: number;
+  classification?: string;
   source_url?: string;
   summary?: string;
   lesson_id?: string;

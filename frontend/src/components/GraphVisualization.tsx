@@ -157,6 +157,11 @@ export function GraphVisualization({ refreshTrigger }: { refreshTrigger?: number
           {selectedNode.domain && (
             <p className="text-xs text-text-tertiary mt-1">{selectedNode.domain}</p>
           )}
+          {selectedNode.classification && (
+            <p className="text-xs text-text-secondary mt-1">
+              Classification: <span className="font-semibold">{selectedNode.classification}</span>
+            </p>
+          )}
           {selectedNode.summary && (
             <p className="text-xs text-text-secondary leading-relaxed mt-1">{selectedNode.summary}</p>
           )}

@@ -1,19 +1,26 @@
 import { useState, useEffect, useCallback } from "react";
 import { fetchLeads } from "../api/client";
-import type { Lead } from "../types/api";
+import type { Lead, Classification } from "../types/api";
 
-function ScorePill({ score }: { score?: number }) {
-  const s = score ?? 0;
-  const color =
-    s >= 70
-      ? "text-success"
-      : s >= 50
-        ? "text-warning"
-        : "text-danger";
+const BADGE_STYLES: Record<Classification, string> = {
+  Strike:    "bg-success/15 text-success ring-success/30",
+  Monitor:   "bg-warning/15 text-warning ring-warning/30",
+  Disregard: "bg-danger/15 text-danger ring-danger/30",
+};
 
+function ClassificationBadge({ classification }: { classification?: Classification | null }) {
+  if (!classification) {
+    return (
+      <span className="text-[10px] font-medium text-text-tertiary bg-surface-overlay ring-1 ring-border-subtle rounded-full px-2 py-0.5">
+        Unclassified
+      </span>
+    );
+  }
   return (
-    <span className={`text-sm font-semibold tabular-nums ${color}`}>
-      {s}
+    <span
+      className={`text-[10px] font-semibold ring-1 rounded-full px-2 py-0.5 ${BADGE_STYLES[classification] ?? ""}`}
+    >
+      {classification}
     </span>
   );
 }
@@ -101,7 +108,7 @@ export function LeadsTable({ refreshTrigger }: { refreshTrigger?: number }) {
               )}
             </div>
           </div>
-          <ScorePill score={lead.score} />
+          <ClassificationBadge classification={lead.classification} />
         </div>
       ))}
     </div>
