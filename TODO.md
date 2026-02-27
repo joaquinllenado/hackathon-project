@@ -21,11 +21,11 @@
 ## Phase 2: Integration (11:45–1:00)
 
 ### Partner A
-- [ ] Define Neo4j schema in a setup script (`backend/setup_neo4j.py`)
+- [X] Define Neo4j schema in a setup script (`backend/setup_neo4j.py`)
   - Nodes: `Strategy`, `Company`, `Evidence`, `Lesson`
   - Relationships: `TARGETS`, `HAS_EVIDENCE`, `LEARNED_FROM`, `EVOLVED_FROM`
   - Include sample seed data for testing
-- [ ] Write Tavily fact-check function (`backend/services/tavily_service.py`)
+- [X] Write Tavily fact-check function (`backend/services/tavily_service.py`)
   - `async def fact_check_lead(company_name, claimed_tech_stack) -> dict`
   - Returns: `{ "actual_tech": [...], "sources": [...], "mismatch": bool }`
 - [ ] Write Tavily competitor research function
