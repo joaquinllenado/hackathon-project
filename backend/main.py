@@ -4,7 +4,7 @@ load_dotenv()
 
 from fastapi import FastAPI, UploadFile, File, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from services.modulate_service import transcribe_audio
 from services.feed_manager import feed_manager
@@ -23,8 +23,25 @@ app.add_middleware(
 )
 
 
+MAX_DESCRIPTION_LENGTH = 10_000
+
+
 class ProductInput(BaseModel):
     description: str
+
+    @field_validator("description")
+    @classmethod
+    def description_not_empty(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("description must not be empty")
+        return v.strip()
+
+    @field_validator("description")
+    @classmethod
+    def description_max_length(cls, v: str) -> str:
+        if len(v) > MAX_DESCRIPTION_LENGTH:
+            raise ValueError(f"description must not exceed {MAX_DESCRIPTION_LENGTH} characters")
+        return v
 
 
 @app.get("/api/hello")
