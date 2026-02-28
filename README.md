@@ -1,4 +1,4 @@
-# The Recursive Hunter
+# Recurve AI
 
 A self-improving autonomous SDR (Sales Development Rep) agent that generates sales strategy, finds leads, validates them, and learns from its mistakes — all from a single product description.
 
@@ -16,7 +16,7 @@ A self-improving autonomous SDR (Sales Development Rep) agent that generates sal
 │                    React Frontend                     │
 │  - Product description input (text + voice/Modulate) │
 │  - Live agent log / activity feed                    │
-│  - Neo4j graph visualization ("Hunter's Brain")      │
+│  - Neo4j graph visualization ("Recurve Brain")       │
 │  - Strategy evolution timeline                       │
 └──────────────┬───────────────────────────────────────┘
                │ /api/*
@@ -153,7 +153,7 @@ Host a simple JSON endpoint (GitHub Gist or separate Render static site):
 During demo, teammate edits the gist/endpoint to trigger the scout live.
 
 ### Demo Script (3 minutes)
-1. **[0:00–0:30]** Voice-command: "Hunter, find me leads for our new Postgres hosting service."
+1. **[0:00–0:30]** Voice-command: "Recurve, find me leads for our new Postgres hosting service."
 2. **[0:30–1:00]** Show strategy generation: ICP, keywords, competitors appearing in the UI.
 3. **[1:00–1:45]** Show lead list with classifications (Strike / Monitor / Disregard). Highlight a self-correction: "Agent classified Company X as Disregard — tech stack mismatch — logged a Lesson."
 4. **[1:45–2:15]** Trigger the mock outage. Show the scout detecting it and the agent drafting a pivot email in real time.

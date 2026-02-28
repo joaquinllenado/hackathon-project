@@ -1,5 +1,5 @@
 """
-Neo4j schema setup + synthetic seed data for The Recursive Hunter.
+Neo4j schema setup + synthetic seed data for Recurve AI.
 
 Usage:
     python setup_neo4j.py              # create constraints + seed data (skip if data exists)
@@ -212,7 +212,7 @@ def verify():
 # ---------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description="Neo4j setup for The Recursive Hunter")
+    parser = argparse.ArgumentParser(description="Neo4j setup for Recurve AI")
     parser.add_argument("--reset", action="store_true", help="Wipe all data before setup")
     parser.add_argument("--seed-only", action="store_true", help="Only insert seed data (skip constraints)")
     args = parser.parse_args()

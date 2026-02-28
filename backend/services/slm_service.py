@@ -1,5 +1,5 @@
 """
-Fastino Pioneer SLM service for The Recursive Hunter.
+Fastino Pioneer SLM service for Recurve AI.
 
 Functions:
   generate_strategy  — product + market research → ICP JSON

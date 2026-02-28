@@ -1,4 +1,4 @@
-# TODO — The Recursive Hunter
+# TODO — Recurve AI
 
 ## Phase 1: Foundation (11:00–11:45)
 

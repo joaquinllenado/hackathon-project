@@ -1,5 +1,5 @@
 """
-Tavily-powered fact-checking and market research for The Recursive Hunter.
+Tavily-powered fact-checking and market research for Recurve AI.
 
 fact_check_lead  — validates a company's claimed tech stack against live web data
 research_market  — gathers competitive landscape for a product description
