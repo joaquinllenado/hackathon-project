@@ -83,7 +83,7 @@ export function ProductInput() {
             value={description}
             onChange={(e) => setDescription(e.target.value.slice(0, MAX_LENGTH))}
             placeholder="Describe your product to find ideal customers..."
-            className="w-full min-h-[48px] px-4 py-3 rounded-xl bg-surface-overlay border border-border-default text-text-primary placeholder-text-tertiary text-sm leading-relaxed focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent resize-none transition-all"
+            className="w-full min-h-[48px] px-4 py-3 rounded-xl bg-surface-overlay border border-border-default text-text-primary placeholder-text-tertiary text-sm leading-relaxed focus:outline-none focus:ring-1 focus:ring-teal focus:border-teal resize-none transition-all"
             disabled={loading}
             rows={2}
           />

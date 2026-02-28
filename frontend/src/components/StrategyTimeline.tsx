@@ -5,7 +5,7 @@ import type { GraphNode } from "../types/api";
 function strategyFromGraph(nodes: GraphNode[]): GraphNode[] {
   return nodes
     .filter((n) => n.type === "strategy")
-    .sort((a, b) => (a.version ?? 0) - (b.version ?? 0));
+    .sort((a, b) => (b.version ?? 0) - (a.version ?? 0));
 }
 
 export function StrategyTimeline({ refreshTrigger }: { refreshTrigger?: number }) {
@@ -56,7 +56,7 @@ export function StrategyTimeline({ refreshTrigger }: { refreshTrigger?: number }
   return (
     <div className="space-y-0">
       {strategies.map((s, i) => {
-        const isLatest = i === strategies.length - 1;
+        const isLatest = i === 0;
         return (
           <div key={s.id} className="flex gap-3">
             <div className="flex flex-col items-center pt-1">

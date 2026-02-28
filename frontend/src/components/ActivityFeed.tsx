@@ -19,7 +19,7 @@ function StatusDot({ icon }: { icon: string }) {
     ? "bg-danger"
     : isAlert
       ? "bg-warning"
-      : "bg-accent";
+      : "bg-teal";
   return <span className={`w-1.5 h-1.5 rounded-full ${color} shrink-0`} />;
 }
 

@@ -6,15 +6,15 @@ import type { GraphNode } from "../types/api";
 type Classification = "Strike" | "Monitor" | "Disregard" | "Unclassified";
 
 const CLASSIFICATION_COLORS: Record<Classification, string> = {
-  Strike: "#22c55e",
+  Strike: "#10b981",
   Monitor: "#f59e0b",
-  Disregard: "#ef4444",
+  Disregard: "#f43f5e",
   Unclassified: "#64748b",
 };
 
-const STRATEGY_COLOR = "#6366f1";
+const STRATEGY_COLOR = "#3b82f6";
 const EVIDENCE_COLOR = "#94a3b8";
-const LESSON_COLOR = "#f59e0b";
+const LESSON_COLOR = "#a78bfa";
 
 const NODE_SIZE = 5;
 
@@ -315,7 +315,7 @@ export function GraphVisualization({ refreshTrigger }: { refreshTrigger?: number
 
       <div
         ref={containerRef}
-        className="h-[400px] w-full rounded-lg overflow-hidden bg-[#08080d] border border-border-subtle"
+        className="h-[400px] w-full rounded-lg overflow-hidden bg-[#0d0f15] border border-border-subtle"
       >
         <ForceGraph2D
           graphData={filteredData}

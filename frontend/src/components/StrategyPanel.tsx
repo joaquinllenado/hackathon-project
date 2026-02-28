@@ -95,7 +95,7 @@ function Label({ children }: { children: React.ReactNode }) {
 function Tag({ children, variant }: { children: React.ReactNode; variant: "accent" | "neutral" }) {
   const cls =
     variant === "accent"
-      ? "bg-accent-muted text-accent"
+      ? "bg-teal-muted text-teal"
       : "bg-surface-overlay text-text-secondary border border-border-subtle";
   return (
     <span className={`inline-block px-2 py-0.5 rounded-md text-xs ${cls}`}>
